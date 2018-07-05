@@ -45,11 +45,10 @@ func run() error {
 
 	s, err := newScene(r)
 
-	wing := "res/sounds/sfx_wing.ogg"
 	swoosh := "res/sounds/sfx_swooshing.ogg"
 	hit := "res/sounds/sfx_hit.ogg"
 	die := "res/sounds/sfx_die.ogg"
-	s.sounds = newSounds(wing, swoosh, hit, die, "ogg123")
+	s.sounds = newSounds(swoosh, hit, die, "ogg123")
 
 	if err != nil {
 		return fmt.Errorf("%v", err)

@@ -88,8 +88,9 @@ func (s *scene) handleEvent(event sdl.Event) bool {
 	case *sdl.QuitEvent:
 		return true
 	case *sdl.KeyboardEvent:
-		if e.GetType() == sdl.KEYDOWN && e.Keysym.Scancode == sdl.SCANCODE_SPACE {
+		if e.GetType() == sdl.KEYDOWN && e.Keysym.Scancode == sdl.SCANCODE_SPACE && !s.bird.again {
 			s.isStart = true
+			go s.sounds.swoosh.Play()
 			s.bird.jump()
 		}
 	}
@@ -99,8 +100,10 @@ func (s *scene) handleEvent(event sdl.Event) bool {
 func (s *scene) update() {
 	s.bird.score++
 	s.bird.update()
-	s.pipes.update()
-	s.bird.touch(s)
+	if !s.bird.again {
+		s.pipes.update()
+		s.bird.touch(s)
+	}
 }
 
 // paint newScene to r (Renderer)
@@ -109,10 +112,10 @@ func (s *scene) paint(r *sdl.Renderer) error {
 	if err := r.Copy(s.bg, nil, nil); err != nil {
 		return fmt.Errorf("could not copy background: %v", err)
 	}
-	if err := s.bird.paint(r); err != nil {
+	if err := s.pipes.paint(r); err != nil {
 		return err
 	}
-	if err := s.pipes.paint(r); err != nil {
+	if err := s.bird.paint(r); err != nil {
 		return err
 	}
 	r.Present()

@@ -23,6 +23,8 @@ type bird struct {
 	w, h     int32
 	speed    float64
 	dead     bool
+	again    bool
+	onetime  bool
 	score    int
 }
 
@@ -45,8 +47,12 @@ func (b *bird) update() {
 	b.time++
 	b.y -= int32(b.speed)
 
-	if b.y < 0 {
-		b.speed = -b.speed * decayFactor
+	if b.y+b.h/2+4 < 0 {
+		b.dead = true
+	}
+	if b.onetime {
+		b.speed = -jumpSpeed
+		b.onetime = false
 	} else {
 		b.speed += gravity
 	}
@@ -69,6 +75,8 @@ func (b *bird) restart() {
 	b.y = 300
 	b.speed = 0
 	b.dead = false
+	b.again = false
+	b.onetime = false
 }
 
 func (b *bird) Destroy() {
@@ -125,7 +133,8 @@ func (b *bird) touch(s *scene) {
 	}
 
 	if isTouch {
-		b.dead = true
+		b.again = true
+		b.onetime = true
 	}
 }
 
